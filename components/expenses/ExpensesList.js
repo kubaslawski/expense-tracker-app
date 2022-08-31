@@ -8,7 +8,7 @@ const ExpensesList = ({ expenses }) => {
             <ExpenseItem
                 description={item.description}
                 ammount={item.ammount}
-                date={item.date.toString()}
+                date={item.date}
             />
         )
     }
