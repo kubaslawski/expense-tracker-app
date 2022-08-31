@@ -6,6 +6,7 @@ const ExpensesList = ({ expenses }) => {
     const renderExpenseItem = ({ item }) => {
         return (
             <ExpenseItem
+                id={item.id}
                 description={item.description}
                 ammount={item.ammount}
                 date={item.date}
