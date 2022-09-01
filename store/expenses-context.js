@@ -1,5 +1,6 @@
 import { createContext, useReducer } from "react";
 import { ADD_EXPENSE, DELETE_EXPENSE, UPDATE_EXPENSE } from "./types";
+import uuid from "react-uuid";
 
 const DUMMY_EXPENSES = [
     {
@@ -44,26 +45,18 @@ export const ExpensesContext = createContext({
 const expensesReducer = (state, action) => {
     switch (action.type) {
         case ADD_EXPENSE: {
-            const id = new Date().toString() + Math.random().toString();
-            return {
-                expenses: [...state.expenses, { id, ...action.payload }],
-                ...state,
-            };
+            const id = uuid();
+            const newExpense = { ...action.payload, id };
+            return [...state, newExpense];
         };
         case UPDATE_EXPENSE: {
             const id = action.payload.id;
             const updatedExpense = action.payload.data;
-            return {
-                ...state,
-                expenses: state.expenses.filter((expense) => expense.id === id ? updatedExpense : expense),
-            };
+            return state.map((expense) => expense.id === id ? updatedExpense : expense);
         };
         case DELETE_EXPENSE: {
-            const id = action.payload.id;
-            return {
-                ...state,
-                expenses: state.expenses.filter((expense) => expense.id !== id),
-            };
+            const id = action.payload;
+            return state.filter((expense) => expense.id !== id);
         };
         default: return state;
     }
