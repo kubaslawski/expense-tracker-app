@@ -4,3 +4,8 @@ export const getFormattedDate = (date) => {
     const day = date.getDate();
     return `${day}-${month}-${year}`;
 };
+
+export const getDateMinusDays = (date, days) => {
+    const newDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - days);
+    return newDate;
+};

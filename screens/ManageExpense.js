@@ -1,8 +1,8 @@
 import { useLayoutEffect } from "react";
 import { View, StyleSheet } from "react-native";
-import Button from "../components/ui/Button";
 // components
 import IconButton from "../components/ui/IconButton";
+import Button from "../components/ui/Button";
 // constants 
 import { globalStyles } from "../constants/styles";
 
@@ -16,8 +16,15 @@ const ManageExpense = ({ navigation, route }) => {
         });
     }, [navigation, isEditing]);
 
-    const cancelHandler = () => { };
-    const confirmHandler = () => { };
+    const deleteExpenseHandler = () => {
+        navigation.goBack();
+    };
+    const cancelHandler = () => {
+        navigation.goBack();
+    };
+    const confirmHandler = () => {
+        navigation.goBack();
+    };
 
     return (
         <View style={styles.container}>
@@ -31,7 +38,7 @@ const ManageExpense = ({ navigation, route }) => {
                         icon="trash"
                         color={globalStyles.colors.error500}
                         size={36}
-                        onPress={() => { }}
+                        onPress={deleteExpenseHandler}
                     />
                 </View>
             )}
