@@ -1,20 +1,36 @@
+import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 // components 
 import Input from './Input';
+import Button from '../ui/Button';
 
-const ExpenseForm = () => {
+const ExpenseForm = ({ onCancel, onSubmit, submitButtonLabel }) => {
 
-    const handleAmmountChange = () => {
+    const [formData, setFormData] = useState({
+        ammount: "",
+        date: "",
+        description: "",
+    });
 
+    const handleInputChange = (inputName, enteredValue) => {
+        setFormData((currentInputValues) => {
+            return {
+                ...currentInputValues,
+                [inputName]: enteredValue,
+            };
+        });
     };
 
-    const handleDateChange = () => {
-
+    const handleSubmit = () => {
+        const expenseData = {
+            ammount: +formData.ammount,
+            date: new Date(formData.date),
+            description: formData.description,
+        };
+        onSubmit(expenseData);
     };
 
-    const handleDescriptionChange = () => {
-
-    };
+    console.log(formData);
 
     return (
         <View style={styles.form}>
@@ -25,8 +41,9 @@ const ExpenseForm = () => {
                     style={styles.rowInput}
                     textInputConfig={{
                         keyboardType: "decimal-pad",
-                        onChangeText: handleAmmountChange,
+                        onChangeText: handleInputChange.bind(this, "ammount"),
                     }}
+                    value={formData.ammount}
                 />
                 <Input
                     label="Date"
@@ -34,14 +51,27 @@ const ExpenseForm = () => {
                     textInputConfig={{
                         placeholder: "YYYY-MM-DD",
                         maxLenght: 10,
-                        onChangeText: handleDateChange,
+                        onChangeText: handleInputChange.bind(this, "date"),
                     }}
+                    value={formData.date}
                 />
             </View>
-            <Input label="Description" textInputConfig={{
-                multiline: true,
-                onChangeText: handleDescriptionChange,
-            }} />
+            <Input
+                label="Description"
+                textInputConfig={{
+                    multiline: true,
+                    onChangeText: handleInputChange.bind(this, "description"),
+                }}
+                value={formData.description}
+            />
+            <View style={styles.buttons}>
+                <Button style={styles.button} mode="flat" onPress={onCancel}>
+                    Cancel
+                </Button>
+                <Button style={styles.button} onPress={handleSubmit}>
+                    {submitButtonLabel}
+                </Button>
+            </View>
         </View>
     );
 };
@@ -65,5 +95,14 @@ const styles = StyleSheet.create({
     },
     rowInput: {
         flex: 1,
-    }
+    },
+    buttons: {
+        alignItems: "center",
+        flexDirection: "row",
+        justifyContent: "center",
+    },
+    button: {
+        minWidth: 120,
+        marginHorizontal: 8,
+    },
 });
