@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 // components
 import IconButton from "../components/ui/IconButton";
 import Button from "../components/ui/Button";
+import ExpenseForm from "../components/manage_expense/ExpenseForm";
 // constants 
 import { globalStyles } from "../constants/styles";
 // context 
@@ -49,6 +50,7 @@ const ManageExpense = ({ navigation, route }) => {
 
     return (
         <View style={styles.container}>
+            <ExpenseForm />
             <View style={styles.buttons}>
                 <Button mode="flat" onPress={cancelHandler} style={styles.button}>Cancel</Button>
                 <Button onPress={confirmHandler} style={styles.button}>{isEditing ? "Update" : "Add"}</Button>
