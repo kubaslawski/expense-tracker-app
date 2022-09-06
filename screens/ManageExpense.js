@@ -8,7 +8,7 @@ import { globalStyles } from "../constants/styles";
 // context 
 import { ExpensesContext } from "../store/expenses-context";
 // https
-import { addExpense } from "../util/http";
+import { addExpense, updateExpense, deleteExpense } from "../util/http";
 
 const ManageExpense = ({ navigation, route }) => {
 
@@ -26,6 +26,7 @@ const ManageExpense = ({ navigation, route }) => {
     }, [navigation, isEditing]);
 
     const deleteExpenseHandler = () => {
+        deleteExpense(editedExpenseId);
         expensesContext.deleteExpense(editedExpenseId);
         navigation.goBack();
     };
@@ -38,6 +39,7 @@ const ManageExpense = ({ navigation, route }) => {
                 editedExpenseId,
                 expenseData,
             );
+            updateExpense(editedExpenseId, expenseData);
         } else {
             const id = await addExpense(expenseData);
             expensesContext.addExpense({ ...expenseData, id: id });
