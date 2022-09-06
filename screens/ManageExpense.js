@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 // components
 import IconButton from "../components/ui/IconButton";
 import ExpenseForm from "../components/manage_expense/ExpenseForm";
+import LoadingSpinner from "../components/ui/LoadingSpinner";
 // constants 
 import { globalStyles } from "../constants/styles";
 // context 
@@ -12,6 +13,7 @@ import { addExpense, updateExpense, deleteExpense } from "../util/http";
 
 const ManageExpense = ({ navigation, route }) => {
 
+    const [isLoading, setIsLoading] = useState(false);
     const expensesContext = useContext(ExpensesContext);
 
     const editedExpenseId = route.params?.expenseId;
@@ -25,27 +27,35 @@ const ManageExpense = ({ navigation, route }) => {
         });
     }, [navigation, isEditing]);
 
-    const deleteExpenseHandler = () => {
-        deleteExpense(editedExpenseId);
+    const deleteExpenseHandler = async () => {
+        setIsLoading(true);
+        await deleteExpense(editedExpenseId);
         expensesContext.deleteExpense(editedExpenseId);
+        setIsLoading(false);
         navigation.goBack();
     };
     const cancelHandler = () => {
         navigation.goBack();
     };
     const confirmHandler = async (expenseData) => {
+        setIsLoading(true);
         if (isEditing) {
             expensesContext.updateExpense(
                 editedExpenseId,
                 expenseData,
             );
-            updateExpense(editedExpenseId, expenseData);
+            await updateExpense(editedExpenseId, expenseData);
         } else {
             const id = await addExpense(expenseData);
             expensesContext.addExpense({ ...expenseData, id: id });
         }
+        setIsLoading(false);
         navigation.goBack();
     };
+
+    if (isLoading) {
+        return <LoadingSpinner />;
+    }
 
     return (
         <View style={styles.container}>
