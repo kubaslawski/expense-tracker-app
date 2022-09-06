@@ -20,5 +20,8 @@ export const getExpenses = async () => {
 
 
 export const addExpense = async (expenseData) => {
-    axios.post(`${BASE_URL}/expenses.json`, expenseData)
+    const response = await axios.post(`${BASE_URL}/expenses.json`, expenseData);
+    const id = response.data.name;
+    return id;
 };
+

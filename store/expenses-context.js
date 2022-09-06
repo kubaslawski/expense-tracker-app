@@ -13,12 +13,11 @@ export const ExpensesContext = createContext({
 const expensesReducer = (state, action) => {
     switch (action.type) {
         case SET_EXPENSES: {
-            return [...action.payload]
+            const invertedArray = action.payload.reverse();
+            return [...invertedArray]
         }
         case ADD_EXPENSE: {
-            const id = uuid();
-            const newExpense = { ...action.payload, id };
-            return [...state, newExpense];
+            return [...state, action.payload];
         };
         case UPDATE_EXPENSE: {
             const id = action.payload.id;
