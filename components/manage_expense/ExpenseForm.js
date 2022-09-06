@@ -1,15 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 // components 
 import Input from './Input';
 import Button from '../ui/Button';
+// functions
+import { getFormattedDate } from '../../util/date';
 
-const ExpenseForm = ({ onCancel, onSubmit, submitButtonLabel }) => {
+const ExpenseForm = ({ defaultValues, onCancel, onSubmit, submitButtonLabel }) => {
 
     const [formData, setFormData] = useState({
-        ammount: "",
-        date: "",
-        description: "",
+        ammount: defaultValues ? defaultValues.ammount.toString() : "",
+        date: defaultValues ? getFormattedDate(defaultValues.date) : "",
+        description: defaultValues ? defaultValues.description : "",
     });
 
     const handleInputChange = (inputName, enteredValue) => {
@@ -42,8 +44,9 @@ const ExpenseForm = ({ onCancel, onSubmit, submitButtonLabel }) => {
                     textInputConfig={{
                         keyboardType: "decimal-pad",
                         onChangeText: handleInputChange.bind(this, "ammount"),
+                        value: formData.ammount,
                     }}
-                    value={formData.ammount}
+
                 />
                 <Input
                     label="Date"
@@ -52,8 +55,9 @@ const ExpenseForm = ({ onCancel, onSubmit, submitButtonLabel }) => {
                         placeholder: "YYYY-MM-DD",
                         maxLenght: 10,
                         onChangeText: handleInputChange.bind(this, "date"),
+                        value: formData.date,
                     }}
-                    value={formData.date}
+
                 />
             </View>
             <Input
@@ -61,8 +65,8 @@ const ExpenseForm = ({ onCancel, onSubmit, submitButtonLabel }) => {
                 textInputConfig={{
                     multiline: true,
                     onChangeText: handleInputChange.bind(this, "description"),
+                    value: formData.description,
                 }}
-                value={formData.description}
             />
             <View style={styles.buttons}>
                 <Button style={styles.button} mode="flat" onPress={onCancel}>
