@@ -7,6 +7,8 @@ import ExpenseForm from "../components/manage_expense/ExpenseForm";
 import { globalStyles } from "../constants/styles";
 // context 
 import { ExpensesContext } from "../store/expenses-context";
+// https
+import { addExpense } from "../util/http";
 
 const ManageExpense = ({ navigation, route }) => {
 
@@ -37,6 +39,7 @@ const ManageExpense = ({ navigation, route }) => {
                 expenseData,
             );
         } else {
+            addExpense(expenseData);
             expensesContext.addExpense(expenseData);
         }
         navigation.goBack();
