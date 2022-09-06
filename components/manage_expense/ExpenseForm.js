@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 // components 
 import Input from './Input';
 import Button from '../ui/Button';
@@ -29,10 +29,19 @@ const ExpenseForm = ({ defaultValues, onCancel, onSubmit, submitButtonLabel }) =
             date: new Date(formData.date),
             description: formData.description,
         };
+        // data validation 
+        const isAmmountValid = !isNaN(expenseData.ammount) && expenseData.ammount > 0;
+        const isDateValid = expenseData.date.toString() !== "Invalid Date";
+        const isDescriptionValid = expenseData.description.trim().toString().length > 0;
+
+        console.log(expenseData.date);
+
+        if (!isAmmountValid || !isDateValid || !isDescriptionValid) {
+            return;
+        }
+
         onSubmit(expenseData);
     };
-
-    console.log(formData);
 
     return (
         <View style={styles.form}>
