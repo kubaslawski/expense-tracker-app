@@ -1,12 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 // components 
-import ExpensesOutput from "../components/expenses/ExpensesOutput";
-import ErrorOverlay from "../components/ui/ErrorOverlay";
-import LoadingSpinner from "../components/ui/LoadingSpinner";
+// import ExpensesOutput from "../components/expenses/ExpensesOutput";
+import ExpensesOutput from "../../components/expenses/ExpensesOutput";
+import ErrorOverlay from "../../components/ui/ErrorOverlay";
+import LoadingSpinner from "../../components/ui/LoadingSpinner";
 // context 
-import { ExpensesContext } from "../store/expenses-context";
-import { getDateMinusDays } from "../util/date";
-import { getExpenses } from "../util/http";
+import { ExpensesContext } from "../../store/expenses-context";
+import { getDateMinusDays } from "../../util/date";
+import { getExpenses } from "../../util/http";
 
 const RecentExpenses = () => {
 
