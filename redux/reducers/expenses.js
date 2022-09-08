@@ -9,7 +9,12 @@ import {
 
 const initialState = {
     expenses: [],
-    expense: null,
+    expense: {
+        id: "",
+        ammount: "",
+        date: new Date(Date.now()),
+        description: "",
+    },
     errorMessage: null,
 };
 
