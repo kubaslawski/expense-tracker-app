@@ -1,5 +1,5 @@
-import { useState, useContext, useLayoutEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { useState, useContext, useLayoutEffect, useEffect } from "react";
+import { Text, View, StyleSheet } from "react-native";
 // components
 import IconButton from "../../components/ui/IconButton";
 import ExpenseForm from "../../components/manage_expense/ExpenseForm";
@@ -10,18 +10,30 @@ import { globalStyles } from "../../constants/styles";
 // context 
 import { ExpensesContext } from "../../store/expenses-context";
 // https
-import { addExpense, updateExpense, deleteExpense } from "../../util/http";
+// import { addExpense, updateExpense, deleteExpense } from "../../util/http";
+// redux 
+import { useSelector, useDispatch } from "react-redux";
+import { getExpense, addExpense, updateExpense, deleteExpense } from "../../redux/actions/expenses";
+// hoc 
+import IsLoadingHOC from "../../hoc/isLoading";
 
-const ManageExpense = ({ navigation, route }) => {
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState();
-    const expensesContext = useContext(ExpensesContext);
+const ManageExpense = ({ navigation, route, setLoading }) => {
+
+    const dispatch = useDispatch();
+    const selectedExpense = useSelector((state) => state.expenses.expense);
 
     const editedExpenseId = route.params?.expenseId;
     const isEditing = !!editedExpenseId;
 
-    const selectedExpense = expensesContext.expenses.find(expense => expense.id === editedExpenseId);
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            dispatch(getExpense(editedExpenseId));
+            setLoading(false);
+        }
+        fetchData();
+    }, [dispatch])
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -30,56 +42,73 @@ const ManageExpense = ({ navigation, route }) => {
     }, [navigation, isEditing]);
 
     const deleteExpenseHandler = async () => {
-        setIsLoading(true);
-        try {
-            await deleteExpense(editedExpenseId);
-            expensesContext.deleteExpense(editedExpenseId);
-            setIsLoading(false);
-            navigation.goBack();
-        } catch (error) {
-            setError("Could not delete expense - please try again later");
-            setIsLoading(false);
-        }
+        dispatch(deleteExpense(editedExpenseId));
     };
 
     const cancelHandler = () => {
         navigation.goBack();
     };
 
-    const confirmHandler = async (expenseData) => {
-        setIsLoading(true);
-        try {
-            if (isEditing) {
-                expensesContext.updateExpense(
-                    editedExpenseId,
-                    expenseData,
-                );
-                await updateExpense(editedExpenseId, expenseData);
-            } else {
-                const id = await addExpense(expenseData);
-                expensesContext.addExpense({ ...expenseData, id: id });
-            }
-            navigation.goBack();
-        } catch (error) {
-            setError("Could not save date - please try again later");
-            setIsLoading(false);
+    const confirmHandler = (expenseData) => {
+        if (isEditing) {
+            dispatch(updateExpense(editedExpenseId, expenseData));
+        } else {
+            dispatch(addExpense(expenseData));
         }
-    };
-
-    const errorHandler = () => {
-        setError(null);
+        navigation.goBack();
     }
 
-    if (error && !isLoading) {
-        return <ErrorOverlay
-            message={error}
-            onConfirm={errorHandler}
-        />;
-    };
+    // const deleteExpenseHandler = async () => {
+    //     setIsLoading(true);
+    //     try {
+    //         await deleteExpense(editedExpenseId);
+    //         expensesContext.deleteExpense(editedExpenseId);
+    //         setIsLoading(false);
+    //         navigation.goBack();
+    //     } catch (error) {
+    //         setError("Could not delete expense - please try again later");
+    //         setIsLoading(false);
+    //     }
+    // };
 
-    if (isLoading) {
-        return <LoadingSpinner />;
-    };
+    // const cancelHandler = () => {
+    //     navigation.goBack();
+    // };
+
+    // const confirmHandler = async (expenseData) => {
+    //     setIsLoading(true);
+    //     try {
+    //         if (isEditing) {
+    //             expensesContext.updateExpense(
+    //                 editedExpenseId,
+    //                 expenseData,
+    //             );
+    //             await updateExpense(editedExpenseId, expenseData);
+    //         } else {
+    //             const id = await addExpense(expenseData);
+    //             expensesContext.addExpense({ ...expenseData, id: id });
+    //         }
+    //         navigation.goBack();
+    //     } catch (error) {
+    //         setError("Could not save date - please try again later");
+    //         setIsLoading(false);
+    //     }
+    // };
+
+    // const errorHandler = () => {
+    //     setError(null);
+    // }
+
+    // if (error && !isLoading) {
+    //     return <ErrorOverlay
+    //         message={error}
+    //         onConfirm={errorHandler}
+    //     />;
+    // };
+
+    // if (isLoading) {
+    //     return <LoadingSpinner />;
+    // };
 
     return (
         <View style={styles.container}>
@@ -103,7 +132,7 @@ const ManageExpense = ({ navigation, route }) => {
     )
 };
 
-export default ManageExpense;
+export default IsLoadingHOC(ManageExpense);
 
 const styles = StyleSheet.create({
     container: {

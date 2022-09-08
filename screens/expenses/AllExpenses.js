@@ -15,9 +15,12 @@ const AllExpenses = () => {
         dispatch(getExpenses());
     }, [dispatch]);
 
-
     return (
-        <ExpensesOutput expenses={expenses} expensesPeriod={"Total"} fallbackText={"No expenses registered"} />
+        <ExpensesOutput
+            expenses={expenses}
+            expensesPeriod={"Total"}
+            fallbackText={"No expenses registered"}
+        />
     )
 };
 

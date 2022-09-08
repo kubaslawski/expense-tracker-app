@@ -6,16 +6,21 @@ import { Ionicons } from '@expo/vector-icons';
 // components 
 import IconButton from './components/ui/IconButton';
 // screens 
-import AllExpenses from './screens/AllExpenses';
-import ManageExpense from './screens/ManageExpense';
-import RecentExpenses from './screens/RecentExpenses';
+import AllExpenses from './screens/expenses/AllExpenses';
+import ManageExpense from './screens/expenses/ManageExpense';
+import RecentExpenses from './screens/expenses/RecentExpenses';
 // styles
 import { globalStyles } from './constants/styles';
 // context
 import ExpensesContextProvider from "./store/expenses-context";
+// redux 
+import store from './redux/store';
+import { Provider } from 'react-redux';
 
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
+
+export const BASE_URL = "https://expense-tracker-app-6e4c5-default-rtdb.europe-west1.firebasedatabase.app";
 
 const ExpensesOverview = () => {
     return (
@@ -65,33 +70,28 @@ const ExpensesOverview = () => {
 
 export default function App() {
     return (
-        <>
-            <ExpensesContextProvider>
-                <StatusBar style="light" />
-                <NavigationContainer>
-                    <Stack.Navigator
-                        screenOptions={{
-                            headerStyle: {
-                                backgroundColor: globalStyles.colors.primary500
-                            },
-                            headerTintColor: "white",
+        <Provider store={store}>
+            <NavigationContainer>
+                <Stack.Navigator
+                    screenOptions={{
+                        headerStyle: { backgroundColor: globalStyles.colors.primary500 },
+                        headerTintColor: 'white',
+                    }}
+                >
+                    <Stack.Screen
+                        name="ExpensesOverview"
+                        component={ExpensesOverview}
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="ManageExpense"
+                        component={ManageExpense}
+                        options={{
+                            presentation: 'modal',
                         }}
-                    >
-                        <Stack.Screen
-                            name="ExpensesOverview"
-                            component={ExpensesOverview}
-                            options={{ headerShown: false }}
-                        />
-                        <Stack.Screen
-                            name="ManageExpense"
-                            component={ManageExpense}
-                            options={{
-                                presentation: "modal"
-                            }}
-                        />
-                    </Stack.Navigator>
-                </NavigationContainer>
-            </ExpensesContextProvider>
-        </>
+                    />
+                </Stack.Navigator>
+            </NavigationContainer>
+        </Provider>
     );
 };
