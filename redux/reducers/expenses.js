@@ -2,12 +2,14 @@
 import {
     ADD_EXPENSE,
     DELETE_EXPENSE,
+    SET_EXPENSE,
     SET_EXPENSES,
     UPDATE_EXPENSE,
 } from "../types";
 
 const initialState = {
     expenses: [],
+    expense: null,
     errorMessage: null,
 };
 
@@ -19,6 +21,11 @@ export default function (state = initialState, action) {
                 ...state,
                 expenses: action.payload
             };
+        case SET_EXPENSE:
+            return {
+                ...state,
+                expense: action.payload,
+            }
         case ADD_EXPENSE:
             return {
                 ...state,

@@ -3,7 +3,8 @@ import {
     ADD_EXPENSE,
     UPDATE_EXPENSE,
     DELETE_EXPENSE,
-    DATA_FETCHING_ERROR
+    DATA_FETCHING_ERROR,
+    SET_EXPENSE
 } from "../types";
 import axios from "axios";
 import { BASE_URL } from "../../App";
@@ -29,6 +30,23 @@ export const getExpenses = () => dispatch => {
         .catch(() => dispatch({
             type: DATA_FETCHING_ERROR,
             payload: "Error fetching data, please try again later."
+        }))
+};
+
+export const getExpense = (id) => dispatch => {
+    axios.get(`${BASE_URL}/expenses/${id}.json/`)
+        .then((res) => {
+            dispatch({
+                type: SET_EXPENSE,
+                payload: {
+                    id: id,
+                    ...res.data
+                }
+            })
+        })
+        .catch(() => dispatch({
+            type: DATA_FETCHING_ERROR,
+            payload: "Error fetching data, please try again later.",
         }))
 };
 
