@@ -36,6 +36,7 @@ const ManageExpense = ({ navigation, route, setLoading }) => {
 
     const deleteExpenseHandler = async () => {
         dispatch(deleteExpense(editedExpenseId));
+        navigation.goBack();
     };
 
     const cancelHandler = () => {

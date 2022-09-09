@@ -45,7 +45,10 @@ export default function (state = initialState, action) {
             };
         case DELETE_EXPENSE:
             id = action.payload;
-            return state.expenses.filter((expense) => expense !== id);
+            return {
+                ...state,
+                expenses: state.expenses.filter((expense) => expense.id !== id)
+            };
         default: return state;
     };
 };
