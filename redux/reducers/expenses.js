@@ -34,11 +34,11 @@ export default function (state = initialState, action) {
         case ADD_EXPENSE:
             return {
                 ...state,
-                expenses: [...state.expenses, action.payload]
+                expenses: [action.payload, ...state.expenses]
             }
         case UPDATE_EXPENSE:
             id = action.payload.id;
-            const updatedExpense = action.payload.updatedExpense;
+            const updatedExpense = action.payload;
             return {
                 ...state,
                 expenses: state.expenses.map((expense) => expense.id === id ? updatedExpense : expense)
