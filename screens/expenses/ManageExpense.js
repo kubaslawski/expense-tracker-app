@@ -21,19 +21,12 @@ import IsLoadingHOC from "../../hoc/isLoading";
 const ManageExpense = ({ navigation, route, setLoading }) => {
 
     const dispatch = useDispatch();
-    const selectedExpense = useSelector((state) => state.expenses.expense);
+    const expenses = useSelector((state) => state.expenses.expenses);
 
     const editedExpenseId = route.params?.expenseId;
     const isEditing = !!editedExpenseId;
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            dispatch(getExpense(editedExpenseId));
-            setLoading(false);
-        }
-        fetchData();
-    }, [dispatch])
+    const selectedExpense = expenses.find((expense) => expense.id === editedExpenseId);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -57,58 +50,6 @@ const ManageExpense = ({ navigation, route, setLoading }) => {
         }
         navigation.goBack();
     }
-
-    // const deleteExpenseHandler = async () => {
-    //     setIsLoading(true);
-    //     try {
-    //         await deleteExpense(editedExpenseId);
-    //         expensesContext.deleteExpense(editedExpenseId);
-    //         setIsLoading(false);
-    //         navigation.goBack();
-    //     } catch (error) {
-    //         setError("Could not delete expense - please try again later");
-    //         setIsLoading(false);
-    //     }
-    // };
-
-    // const cancelHandler = () => {
-    //     navigation.goBack();
-    // };
-
-    // const confirmHandler = async (expenseData) => {
-    //     setIsLoading(true);
-    //     try {
-    //         if (isEditing) {
-    //             expensesContext.updateExpense(
-    //                 editedExpenseId,
-    //                 expenseData,
-    //             );
-    //             await updateExpense(editedExpenseId, expenseData);
-    //         } else {
-    //             const id = await addExpense(expenseData);
-    //             expensesContext.addExpense({ ...expenseData, id: id });
-    //         }
-    //         navigation.goBack();
-    //     } catch (error) {
-    //         setError("Could not save date - please try again later");
-    //         setIsLoading(false);
-    //     }
-    // };
-
-    // const errorHandler = () => {
-    //     setError(null);
-    // }
-
-    // if (error && !isLoading) {
-    //     return <ErrorOverlay
-    //         message={error}
-    //         onConfirm={errorHandler}
-    //     />;
-    // };
-
-    // if (isLoading) {
-    //     return <LoadingSpinner />;
-    // };
 
     return (
         <View style={styles.container}>
