@@ -1,11 +1,15 @@
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
-
+import { StyleSheet, Text, View } from "react-native";
+import { globalStyles } from "../../constants/styles";
+// redux 
+import { useSelector } from "react-redux";
 // components 
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 
 const AuthForm = ({ isLogin, onSubmit, areCredentialsValid }) => {
+
+    const errorMessage = useSelector((state) => state.ui.errorMessage);
     const [credentials, setCredentials] = useState({
         email: "",
         confirmEmail: "",
@@ -40,7 +44,7 @@ const AuthForm = ({ isLogin, onSubmit, areCredentialsValid }) => {
                     invalid={emailIsInvalid}
                     label="Email Address"
                     textInputConfig={{
-                        keyboardType="email-address",
+                        keyboardType: "email-address",
                         onChangeText: handleInputChange.bind(this, "email"),
                         value: credentials.email
                     }}
@@ -50,7 +54,7 @@ const AuthForm = ({ isLogin, onSubmit, areCredentialsValid }) => {
                         invalid={emailsDontMatch}
                         label="Confirm Email"
                         textInputConfig={{
-                            keyboardType="email-address",
+                            keyboardType: "email-address",
                             onChangeText: handleInputChange.bind(this, "confirmEmail"),
                             value: credentials.confirmEmail
                         }}
@@ -61,7 +65,7 @@ const AuthForm = ({ isLogin, onSubmit, areCredentialsValid }) => {
                     label="Password"
                     textInputConfig={{
                         onChangeText: handleInputChange.bind(this, "password"),
-                        secureEntryText: true,
+                        secureTextEntry: true,
                         value: credentials.password
                     }}
                 />
@@ -71,12 +75,15 @@ const AuthForm = ({ isLogin, onSubmit, areCredentialsValid }) => {
                         label="Confirm Password"
                         textInputConfig={{
                             onChangeText: handleInputChange.bind(this, "confirmPassword"),
-                            secureEntryText: true,
+                            secureTextEntry: true,
                             value: credentials.confirmPassword
                         }}
                     />
                 )}
-                <View style={styles.button}>
+                <View style={styles.errorContainer}>
+                    <Text style={styles.errorMessage}>{errorMessage}</Text>
+                </View>
+                <View style={styles.buttons}>
                     <Button onPress={handleSubmit}>
                         {isLogin ? "Log In" : "Sign Up"}
                     </Button>
@@ -90,6 +97,12 @@ export default AuthForm;
 
 const styles = StyleSheet.create({
     buttons: {
-        marginTop: 12,
-    }
+        marginTop: 24,
+    },
+    errorContainer: {
+        textAlign: "center"
+    },
+    errorMessage: {
+        color: globalStyles.colors.error500
+    },
 })
