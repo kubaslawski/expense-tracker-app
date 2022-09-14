@@ -4,5 +4,12 @@ export const ADD_EXPENSE = "ADD_EXPENSE";
 export const UPDATE_EXPENSE = "UPDATE_EXPENSE";
 export const DELETE_EXPENSE = "DELETE_EXPENSE";
 
+export const CREATE_USER = "CREATE_USER";
+export const AUTH_USER = "AUTH_USER";
+export const UNAUTH_USER = "UNAUTH_USER";
+
 
 export const DATA_FETCHING_ERROR = "DATA_FETCHING_ERROR";
+export const START_LOADING_UI = "START_LOADING_UI";
+export const STOP_LOADING_UI = "STOP_LOADING_UI";
+export const SET_ERRORS = "SET_ERRORS";
