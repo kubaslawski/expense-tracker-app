@@ -1,6 +1,16 @@
+import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
+// redux 
+import { useSelector } from "react-redux";
+// hoc 
+import IsLoadingHOC from "../../hoc/isLoading";
+// others 
+import axios from "axios";
 
 const WelcomeScreen = () => {
+
+    const token = useSelector((state) => state.user.token);
+
     return (
         <View>
             <Text>Welcome!</Text>
@@ -9,7 +19,7 @@ const WelcomeScreen = () => {
     );
 };
 
-export default WelcomeScreen;
+export default IsLoadingHOC(WelcomeScreen);
 
 const styles = StyleSheet.create({
     container: {

@@ -4,12 +4,17 @@ import {
     UPDATE_EXPENSE,
     DELETE_EXPENSE,
     DATA_FETCHING_ERROR,
-    SET_EXPENSE
+    SET_EXPENSE,
+    START_LOADING_UI
 } from "../types";
 import axios from "axios";
 import { BASE_URL } from "../../App";
 
 export const getExpenses = () => dispatch => {
+    dispatch({
+        type: START_LOADING_UI,
+        message: "Fetching data..."
+    })
     axios.get(`${BASE_URL}/expenses.json/`)
         .then((res) => {
             const expenses = [];

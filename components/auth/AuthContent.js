@@ -1,14 +1,17 @@
 import { useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
-
+import { Alert, StyleSheet, Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 // components 
 import FlatButton from "../ui/FlatButton";
-
+import AuthForm from "./AuthForm";
 // functions 
 import { isEmail, isEmpty } from "../../util/validators/validators";
 import { globalStyles } from "../../constants/styles";
 
+
 const AuthContent = ({ isLogin, onAuthenticate }) => {
+
+    const navigation = useNavigation();
 
     const [areCredentialsValid, setAreCredentialsValid] = useState({
         email: false,
@@ -17,14 +20,20 @@ const AuthContent = ({ isLogin, onAuthenticate }) => {
         confirmPassword: false,
     });
 
-    const switchAuthModeHandler = () => { };
+    const switchAuthModeHandler = () => {
+        if (isLogin) {
+            navigation.replace("SignUpScreen");
+        } else {
+            navigation.replace("LoginScreen");
+        }
+    };
 
     const submitHandler = (credentials) => {
         let { email, confirmEmail, password, confirmPassword } = credentials;
         email = email.trim();
         password = password.trim();
 
-        const isEmailValid = isEmpty(email) && isEmail(email);
+        const isEmailValid = (!isEmpty(email) && isEmail(email));
         const isPasswordValid = password.length > 6;
         const areEmailsEqual = email === confirmEmail;
         const arePasswordsEqual = password === confirmPassword;
@@ -48,12 +57,17 @@ const AuthContent = ({ isLogin, onAuthenticate }) => {
 
     return (
         <View style={styles.container}>
-            {/* AuthForm */}
+            <AuthForm
+                areCredentialsValid={areCredentialsValid}
+                isLogin={isLogin}
+                onSubmit={submitHandler}
+            />
             <View style={styles.buttons}>
                 <FlatButton onPress={switchAuthModeHandler}>
                     {isLogin ? "Create new User" : "Log in Instead"}
                 </FlatButton>
             </View>
+
         </View>
     )
 };
@@ -75,5 +89,5 @@ const styles = StyleSheet.create({
     },
     buttons: {
         marginTop: 8,
-    }
+    },
 })

@@ -1,26 +1,23 @@
 import { useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { useSelector } from "react-redux";
 import { globalStyles } from "../constants/styles";
 
 const IsLoadingHOC = (WrappedComponent) => (props) => {
-    const [isLoading, setIsLoading] = useState(false);
+    const isLoading = useSelector((state) => state.ui.isLoading);
 
-    const setLoadingState = (isComponentLoading) => {
-        console.log(isComponentLoading);
-        setIsLoading(isComponentLoading);
+
+    if (isLoading) {
+        return (
+            <View style={styles.container}>
+                <ActivityIndicator size={"large"} color={"white"} />
+            </View>
+        )
     }
 
     return (
-        <>
-            {isLoading && (
-                <View style={styles.container}>
-                    <ActivityIndicator size={"large"} color={"white"} />
-                </View>
-            )}
-            <WrappedComponent {...props} setLoading={setLoadingState} />
-        </>
+        <WrappedComponent {...props} />
     )
-
 };
 
 export default IsLoadingHOC;
