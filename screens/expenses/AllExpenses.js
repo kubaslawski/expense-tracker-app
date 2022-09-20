@@ -10,9 +10,13 @@ const AllExpenses = () => {
 
     const dispatch = useDispatch();
     const expenses = useSelector((state) => state.expenses.expenses);
+    const token = useSelector((state) => state.user.token);
 
     useEffect(() => {
-        dispatch(getExpenses());
+        if (token) {
+            dispatch(getExpenses(token));
+        }
+
     }, [dispatch]);
 
     return (

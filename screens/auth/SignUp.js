@@ -1,7 +1,5 @@
-import { useState } from "react";
 // components 
 import AuthContent from "../../components/auth/AuthContent";
-import LoadingSpinner from "../../components/ui/LoadingSpinner";
 // redux
 import { useDispatch } from "react-redux";
 // actions 
@@ -12,10 +10,12 @@ const SignUpScreen = () => {
 
     const dispatch = useDispatch();
 
-    const handleSignUp = ({ email, password }) => {
+    const handleSignUp = ({ email, confirmEmail, password, confirmPassword }) => {
         dispatch(createUser({
             email: email,
+            confirmEmail: confirmEmail,
             password: password,
+            confirmPassword: confirmPassword
         }))
     };
 
@@ -27,5 +27,4 @@ const SignUpScreen = () => {
     );
 };
 
-// export default SignUpScreen;
 export default IsLoadingHOC(SignUpScreen);

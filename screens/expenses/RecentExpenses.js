@@ -1,15 +1,13 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect } from "react";
 // components 
 import ExpensesOutput from "../../components/expenses/ExpensesOutput";
-import ErrorOverlay from "../../components/ui/ErrorOverlay";
-import LoadingSpinner from "../../components/ui/LoadingSpinner";
-// context 
-import { ExpensesContext } from "../../store/expenses-context";
+// utils 
 import { getDateMinusDays } from "../../util/date";
 // redux 
 import { useSelector, useDispatch } from "react-redux";
 // actions 
 import { getExpenses } from "../../redux/actions/expenses";
+import IsLoadingHOC from "../../hoc/isLoading";
 
 const RecentExpenses = () => {
 
@@ -18,7 +16,7 @@ const RecentExpenses = () => {
 
     useEffect(() => {
         dispatch(getExpenses());
-    }, [dispatch]);
+    }, []);
 
     const recentExpenses = expenses.filter((expense) => {
         const today = new Date();
@@ -35,4 +33,4 @@ const RecentExpenses = () => {
     );
 };
 
-export default RecentExpenses;
+export default IsLoadingHOC(RecentExpenses);

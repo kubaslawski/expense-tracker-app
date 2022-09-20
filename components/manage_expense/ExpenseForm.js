@@ -22,6 +22,10 @@ const ExpenseForm = ({ defaultValues, onCancel, onSubmit, submitButtonLabel }) =
             value: defaultValues ? defaultValues.description : "",
             isValid: true,
         },
+        userId: {
+            value: defaultValues ? defaultValues.userId : "",
+            isValid: true
+        },
     });
 
     const handleInputChange = (inputName, enteredValue) => {
@@ -41,6 +45,7 @@ const ExpenseForm = ({ defaultValues, onCancel, onSubmit, submitButtonLabel }) =
             ammount: +formData.ammount.value,
             date: new Date(formData.date.value),
             description: formData.description.value,
+            userId: formData.userId.value,
         };
         // data validation 
         const isAmmountValid = !isNaN(expenseData.ammount) && expenseData.ammount > 0;

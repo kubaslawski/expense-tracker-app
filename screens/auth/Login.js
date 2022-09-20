@@ -4,7 +4,7 @@ import AuthContent from "../../components/auth/AuthContent";
 import { useDispatch } from "react-redux";
 // actions
 import { loginUser } from "../../redux/actions/user";
-
+import IsLoadingHOC from "../../hoc/isLoading";
 
 const LoginScreen = () => {
 
@@ -14,8 +14,7 @@ const LoginScreen = () => {
         dispatch(loginUser({
             email: email,
             password: password,
-            returnSecureToken: true,
-        }))
+        }));
     };
 
     return (
@@ -26,4 +25,4 @@ const LoginScreen = () => {
     );
 };
 
-export default LoginScreen;
+export default IsLoadingHOC(LoginScreen);

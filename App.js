@@ -1,8 +1,12 @@
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
+import jwtDecode from 'jwt-decode';
 // components 
 import IconButton from './components/ui/IconButton';
 // expenses screens 
@@ -10,26 +14,24 @@ import AllExpenses from './screens/expenses/AllExpenses';
 import ManageExpense from './screens/expenses/ManageExpense';
 import RecentExpenses from './screens/expenses/RecentExpenses';
 // auth screens 
-import WelcomeScreen from "./screens/auth/Welcome";
 import LoginScreen from "./screens/auth/Login";
 import SignUpScreen from "./screens/auth/SignUp";
 // styles
 import { globalStyles } from './constants/styles';
 // context
-import ExpensesContextProvider from "./store/expenses-context";
 // redux 
 import store from './redux/store';
 import { Provider, useSelector, useDispatch } from 'react-redux';
 // actions
-import { AUTH_USER, SET_ERRORS, START_LOADING_UI, STOP_LOADING_UI, UNAUTH_USER } from './redux/types';
-import { useEffect } from 'react';
+import { AUTH_USER, SET_ERRORS, UNAUTH_USER } from './redux/types';
+import { logoutUser } from './redux/actions/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import IsLoadingHOC from './hoc/isLoading';
 
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
 
-export const BASE_URL = "https://expense-tracker-app-6e4c5-default-rtdb.europe-west1.firebasedatabase.app";
+const BASE_URL = "http://localhost:5000/expense-tracker-app-6e4c5/europe-west3/api";
+axios.defaults.baseURL = BASE_URL;
 
 const ExpensesOverview = () => {
     return (
@@ -56,7 +58,7 @@ const ExpensesOverview = () => {
             })}
         >
             <BottomTabs.Screen
-                name="RecentExpenses"
+                name="RecentExpensesScreen"
                 component={RecentExpenses}
                 options={{
                     title: "Recent Expenses",
@@ -92,105 +94,67 @@ const AuthStack = () => {
     )
 }
 
-const AuthenticatedStack = () => {
+const Navigation = () => {
 
-    const dispatch = useDispatch();
-
-
-    return (
-        <Stack.Navigator
-            screenOptions={{
-                headerStyle: { backgroundColor: globalStyles.colors.primary500 },
-                headerTintColor: "white",
-                contentStyle: { backgroundColor: globalStyles.colors.primary100 },
-            }}
-        >
-            <Stack.Screen
-                name="Welcome"
-                component={WelcomeScreen}
-                options={{
-                    headerRight: ({ tintColor }) => <IconButton
-                        icon="exit"
-                        color={tintColor}
-                        size={24}
-                        onPress={() => dispatch({ type: UNAUTH_USER })}
-                    />
-                }}
-            />
-        </Stack.Navigator>
-    )
-}
-
-const Navigation = ({ isAuthenticated = false }) => {
+    const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
 
     return (
         <NavigationContainer>
-            {isAuthenticated ? <AuthenticatedStack /> : <AuthStack />}
+            {isAuthenticated && <ExpensesOverview />}
+            {!isAuthenticated && <AuthStack />}
         </NavigationContainer>
     )
 };
 
-const RootComponent = () => {
-    const dispatch = useDispatch();
-    const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
+const Root = () => {
+    const [isTryingLogin, setIsTryingLogin] = useState(true);
 
     useEffect(() => {
-        AsyncStorage.getItem("token")
-            .then((token) => {
-                if (token) {
-                    dispatch({
-                        type: AUTH_USER,
-                        payload: token
-                    })
+        const fetchToken = async () => {
+            const token = localStorage.getItem("token");
+            if (token) {
+                const decodedToken = jwtDecode(token);
+                if (decodedToken.exp * 1000 < Date.now()) {
+                    store.dispatch(logoutUser())
+                } else {
+                    store.dispatch({ type: UNAUTH_USER });
+                    axios.defaults.headers.common['Authorization'] = token;
+                    store.dispatch({ type: AUTH_USER })
                 }
-            })
-            .catch(() => dispatch({
-                type: SET_ERRORS,
-                payload: "An unknown error occured, please try again."
-            }))
-    }, []);
+            };
+            setIsTryingLogin(false);
+        }
+        fetchToken();
+    }, [])
 
-    return (
-        <Navigation isAuthenticated={isAuthenticated} />
-    )
+    if (isTryingLogin) {
+        return (
+            <View style={styles.container}>
+                <ActivityIndicator size={"large"} color={"white"} />
+            </View>
+        );
+    };
+    return <Navigation />;
+
 }
 
 export default function App() {
-
-
-
-
-
     return (
-        <Provider store={store}>
-            <StatusBar style='light' />
-            <RootComponent />
-        </Provider>
+        <>
+            <StatusBar style="light" />
+            <Provider store={store}>
+                <Root />
+            </Provider>
+        </>
     )
-    // return (
-    //     <Provider store={store}>
-    //         <NavigationContainer>
-    //             <Stack.Navigator
-    //                 screenOptions={{
-    //                     headerStyle: { backgroundColor: globalStyles.colors.primary500 },
-    //                     headerTintColor: 'white',
-    //                 }}
-    //             >
-    //                 <Stack.Screen
-    //                     name="ExpensesOverview"
-    //                     component={ExpensesOverview}
-    //                     options={{ headerShown: false }}
-    //                 />
-    //                 <Stack.Screen
-    //                     name="ManageExpense"
-    //                     component={ManageExpense}
-    //                     options={{
-    //                         presentation: 'modal',
-    //                     }}
-    //                 />
-    //             </Stack.Navigator>
-    //         </NavigationContainer>
-    //     </Provider>
-    // );
-
 };
+
+const styles = StyleSheet.create({
+    container: {
+        alignItems: "center",
+        backgroundColor: globalStyles.colors.primary700,
+        minHeight: "100%",
+        justifyContent: "center",
+        padding: 24,
+    }
+});
