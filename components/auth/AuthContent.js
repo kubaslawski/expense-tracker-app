@@ -52,7 +52,7 @@ const AuthContent = ({ isLogin, onAuthenticate }) => {
             });
             return;
         }
-        onAuthenticate({ email, password })
+        onAuthenticate(credentials);
     };
 
     return (

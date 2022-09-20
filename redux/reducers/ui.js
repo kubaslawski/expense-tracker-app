@@ -18,19 +18,16 @@ export default function (state = initialState, action) {
                 ...state,
                 errorMessage: action.payload,
             };
-        case START_LOADING_UI: {
+        case START_LOADING_UI:
             return {
                 ...state,
                 isLoading: true,
             }
-        }
-        case STOP_LOADING_UI: {
+        case STOP_LOADING_UI:
             return {
                 ...state,
-                isLoading: false,
-
+                isLoading: false
             }
-        }
         case SET_ERRORS: {
             return {
                 ...state,

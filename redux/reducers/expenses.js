@@ -37,17 +37,18 @@ export default function (state = initialState, action) {
                 expenses: [action.payload, ...state.expenses]
             }
         case UPDATE_EXPENSE:
-            id = action.payload.id;
-            const updatedExpense = action.payload;
+            id = action.payload.expenseId;
+            const newDate = new Date(action.payload.date);
+            const updatedExpense = { ...action.payload, date: newDate };
             return {
                 ...state,
-                expenses: state.expenses.map((expense) => expense.id === id ? updatedExpense : expense)
+                expenses: state.expenses.map((expense) => expense.expenseId === id ? updatedExpense : expense)
             };
         case DELETE_EXPENSE:
             id = action.payload;
             return {
                 ...state,
-                expenses: state.expenses.filter((expense) => expense.id !== id)
+                expenses: state.expenses.filter((expense) => expense.expenseId !== id)
             };
         default: return state;
     };

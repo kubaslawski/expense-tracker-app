@@ -1,5 +1,4 @@
 import {
-    CREATE_USER,
     AUTH_USER,
     SET_ERRORS,
     START_LOADING_UI,
@@ -10,25 +9,18 @@ import {
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_KEY = "AIzaSyABShBaGzFroJ7OiJG9zEWVlVsjOQ4XAI8";
 
 export const createUser = (userData) => dispatch => {
+    console.log(userData)
     dispatch({
         type: START_LOADING_UI
     })
-    axios.post(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`, {
-        ...userData,
-        returnSecureToken: true,
-    })
+    axios.post(`/signup/`, userData)
         .then((res) => {
-            dispatch({
-                type: AUTH_USER,
-                payload: res.data.idToken
-            });
-            dispatch({
-                type: STOP_LOADING_UI
-            });
+            authUser(res.data.token);
+            dispatch({ type: AUTH_USER })
         })
+        .then(() => dispatch({ type: STOP_LOADING_UI }))
         .catch((err) => {
             console.log(err);
             dispatch({
@@ -39,16 +31,13 @@ export const createUser = (userData) => dispatch => {
 
 
 export const loginUser = (userData) => dispatch => {
-    axios.post(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`, userData)
+    dispatch({ type: START_LOADING_UI })
+    axios.post(`/login/`, userData)
         .then((res) => {
-            const token = res.data.idToken;
-            dispatch({
-                type: AUTH_USER,
-                payload: token
-            })
-            AsyncStorage.setItem('token', token);
-            dispatch({ type: STOP_LOADING_UI })
+            authUser(res.data.token);
+            dispatch({ type: AUTH_USER })
         })
+        .then(() => dispatch({ type: STOP_LOADING_UI }))
         .catch((err) => {
             dispatch({
                 type: SET_ERRORS,
@@ -68,5 +57,10 @@ export const logoutUser = () => dispatch => {
     dispatch({
         type: STOP_LOADING_UI
     });
-}
+};
 
+const authUser = (token) => {
+    const FBIdToken = `Bearer ${token}`;
+    AsyncStorage.setItem("token", FBIdToken);
+    axios.defaults.headers.common["Authorization"] = FBIdToken;
+}

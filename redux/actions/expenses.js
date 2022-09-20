@@ -5,33 +5,35 @@ import {
     DELETE_EXPENSE,
     DATA_FETCHING_ERROR,
     SET_EXPENSE,
-    START_LOADING_UI
+    START_LOADING_UI,
+    STOP_LOADING_UI
 } from "../types";
 import axios from "axios";
-import { BASE_URL } from "../../App";
 
 export const getExpenses = () => dispatch => {
     dispatch({
         type: START_LOADING_UI,
         message: "Fetching data..."
     })
-    axios.get(`${BASE_URL}/expenses.json/`)
+    axios.get(`expenses/`)
         .then((res) => {
             const expenses = [];
             for (const key in res.data) {
                 const expenseObj = {
-                    id: key,
+                    expenseId: res.data[key].expenseId,
                     ammount: res.data[key].ammount,
                     date: new Date(res.data[key].date),
                     description: res.data[key].description,
+                    userId: res.data[key].userId,
                 };
                 expenses.push(expenseObj);
             };
             dispatch({
                 type: SET_EXPENSES,
                 payload: expenses
-            })
+            });
         })
+        .then(() => dispatch({ type: STOP_LOADING_UI }))
         .catch(() => dispatch({
             type: DATA_FETCHING_ERROR,
             payload: "Error fetching data, please try again later."
@@ -39,7 +41,7 @@ export const getExpenses = () => dispatch => {
 };
 
 export const getExpense = (id) => dispatch => {
-    axios.get(`${BASE_URL}/expenses/${id}.json/`)
+    axios.get(`expenses/${id}/`)
         .then((res) => {
             dispatch({
                 type: SET_EXPENSE,
@@ -56,7 +58,8 @@ export const getExpense = (id) => dispatch => {
 };
 
 export const addExpense = (expenseData) => dispatch => {
-    axios.post(`${BASE_URL}/expenses.json/`, expenseData)
+    dispatch({ type: START_LOADING_UI })
+    axios.post(`expenses/`, expenseData)
         .then((res) => {
             const expenseObj = {
                 ...expenseData,
@@ -67,6 +70,7 @@ export const addExpense = (expenseData) => dispatch => {
                 payload: expenseObj
             });
         })
+        .then(() => dispatch({ type: STOP_LOADING_UI }))
         .catch(() => {
             dispatch({
                 type: DATA_FETCHING_ERROR,
@@ -75,18 +79,16 @@ export const addExpense = (expenseData) => dispatch => {
         })
 };
 
-export const updateExpense = (id, expenseData) => dispatch => {
-    axios.put(`${BASE_URL}/expenses/${id}.json/`, expenseData)
-        .then(() => {
-            const expenseObj = {
-                ...expenseData,
-                id: id,
-            };
+export const updateExpense = (expenseId, expenseData) => dispatch => {
+    dispatch({ type: START_LOADING_UI })
+    axios.put(`/expenses/${expenseId}/`, expenseData)
+        .then((res) => {
             dispatch({
                 type: UPDATE_EXPENSE,
-                payload: expenseObj,
+                payload: res.data,
             });
         })
+        .then(() => dispatch({ type: STOP_LOADING_UI }))
         .catch(() => {
             dispatch({
                 type: DATA_FETCHING_ERROR,
@@ -95,14 +97,16 @@ export const updateExpense = (id, expenseData) => dispatch => {
         })
 };
 
-export const deleteExpense = (id) => dispatch => {
-    axios.delete(`${BASE_URL}/expenses/${id}.json/`)
+export const deleteExpense = (expenseId) => dispatch => {
+    dispatch({ type: START_LOADING_UI })
+    axios.delete(`/expenses/${expenseId}/`)
         .then(() => {
             dispatch({
                 type: DELETE_EXPENSE,
-                payload: id,
+                payload: expenseId,
             });
         })
+        .then(() => dispatch({ type: STOP_LOADING_UI }))
         .catch(() => {
             dispatch({
                 type: DATA_FETCHING_ERROR,

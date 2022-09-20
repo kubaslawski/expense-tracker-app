@@ -1,19 +1,13 @@
-import { useState, useContext, useLayoutEffect, useEffect } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { useLayoutEffect } from "react";
+import { View, StyleSheet } from "react-native";
 // components
 import IconButton from "../../components/ui/IconButton";
 import ExpenseForm from "../../components/manage_expense/ExpenseForm";
-import LoadingSpinner from "../../components/ui/LoadingSpinner";
-import ErrorOverlay from "../../components/ui/ErrorOverlay";
 // constants 
 import { globalStyles } from "../../constants/styles";
-// context 
-import { ExpensesContext } from "../../store/expenses-context";
-// https
-// import { addExpense, updateExpense, deleteExpense } from "../../util/http";
 // redux 
 import { useSelector, useDispatch } from "react-redux";
-import { getExpense, addExpense, updateExpense, deleteExpense } from "../../redux/actions/expenses";
+import { addExpense, updateExpense, deleteExpense } from "../../redux/actions/expenses";
 // hoc 
 import IsLoadingHOC from "../../hoc/isLoading";
 
@@ -26,7 +20,7 @@ const ManageExpense = ({ navigation, route, setLoading }) => {
     const editedExpenseId = route.params?.expenseId;
     const isEditing = !!editedExpenseId;
 
-    const selectedExpense = expenses.find((expense) => expense.id === editedExpenseId);
+    const selectedExpense = expenses.find((expense) => expense.expenseId === editedExpenseId);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -74,7 +68,7 @@ const ManageExpense = ({ navigation, route, setLoading }) => {
     )
 };
 
-export default IsLoadingHOC(ManageExpense);
+export default ManageExpense;
 
 const styles = StyleSheet.create({
     container: {
